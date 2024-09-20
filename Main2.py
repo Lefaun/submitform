@@ -14,6 +14,7 @@ GITHUB_FILE_PATH = "ideas.csv"
 #GITHUB_ACCESS_TOKEN = os.getenv("GITHUB_ACCESS_TOKEN")  # For local use
 GITHUB_ACCESS_TOKEN = st.secrets["general"]["GITHUB_ACCESS_TOKEN"]  # For Streamlit sharing
 
+
 # Function to load CSV file from GitHub
 def load_csv(url):
     response = requests.get(url)
