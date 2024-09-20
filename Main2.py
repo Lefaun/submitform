@@ -6,7 +6,7 @@ import base64
 import json
 
 # GitHub repo and file information
-GITHUB_REPO = "lefaun/submitform"
+GITHUB_REPO = "Lefaun/submitform"
 GITHUB_FILE_PATH = "ideas.csv"
 GITHUB_ACCESS_TOKEN = "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"
 
