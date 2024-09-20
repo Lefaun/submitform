@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import requests
+import os
 from io import StringIO
 import base64
 import json
@@ -8,10 +9,8 @@ import json
 # GitHub repo and file information
 GITHUB_REPO = "Lefaun/submitform"
 GITHUB_FILE_PATH = "ideas.csv"
-GITHUB_ACCESS_TOKEN = "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"
 
-# GitHub raw file URL
-csv_url = f"https://raw.githubusercontent.com/{GITHUB_REPO}/main/{GITHUB_FILE_PATH}"
+GITHUB_ACCESS_TOKEN = os.getenv("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")
 
 # Function to load CSV file from GitHub
 def load_csv(url):
@@ -24,38 +23,40 @@ def load_csv(url):
         st.error("Failed to load data from GitHub.")
         return pd.DataFrame(columns=["Name", "Idea"])
 
-# Function to get the SHA of the file (needed for updates)
+# Function to get the SHA of the file
 def get_file_sha(repo, path, token):
-    url = f"https://raw.githubusercontent.com/Lefaun/submitform/ideas.csv"
+    url = f"https://api.github.com/repos/{repo}/contents/{path}"
     headers = {"Authorization": f"token {token}"}
+
     response = requests.get(url, headers=headers)
+
     if response.status_code == 200:
         file_info = response.json()
         return file_info['sha']
     else:
-        st.error("Failed to fetch file SHA.")
+        st.error(f"Failed to fetch file SHA. Status Code: {response.status_code}")
+        st.error(f"Response: {response.text}")
         return None
 
 # Function to update CSV on GitHub
 def update_csv_on_github(repo, path, token, content, sha):
-    url = f"https://raw.githubusercontent.com/Lefaun/submitform/ideas.csv"
+    url = f"https://api.github.com/repos/{repo}/contents/{path}"
     headers = {
         "Authorization": f"token {token}",
         "Content-Type": "application/json"
     }
-    
-    # Prepare the data to send
+
     message = "Updating CSV with new idea submission"
     content_encoded = base64.b64encode(content.encode()).decode("utf-8")
-    
+
     data = {
         "message": message,
         "content": content_encoded,
         "sha": sha
     }
-    
+
     response = requests.put(url, headers=headers, data=json.dumps(data))
-    
+
     if response.status_code == 200:
         st.success("CSV file updated successfully on GitHub.")
     else:
@@ -63,6 +64,7 @@ def update_csv_on_github(repo, path, token, content, sha):
         st.error(response.json())
 
 # Load existing ideas from GitHub CSV
+csv_url = f"https://raw.githubusercontent.com/{GITHUB_REPO}/main/{GITHUB_FILE_PATH}"
 df_ideas = load_csv(csv_url)
 
 # Streamlit form to submit ideas
@@ -73,18 +75,13 @@ idea = st.text_area("Your Idea:")
 # Handle form submission
 if st.button("Submit"):
     if name and idea:
-        # Append new idea to the DataFrame
         new_row = pd.DataFrame([[name, idea]], columns=["Name", "Idea"])
         df_ideas = pd.concat([df_ideas, new_row], ignore_index=True)
-        
-        # Convert the DataFrame to CSV format
+
         csv_content = df_ideas.to_csv(index=False)
-        
-        # Get the SHA of the existing file on GitHub
+
         sha = get_file_sha(GITHUB_REPO, GITHUB_FILE_PATH, GITHUB_ACCESS_TOKEN)
-        
         if sha:
-            # Update the file on GitHub
             update_csv_on_github(GITHUB_REPO, GITHUB_FILE_PATH, GITHUB_ACCESS_TOKEN, csv_content, sha)
     else:
         st.error("Please fill out both fields before submitting.")
@@ -93,3 +90,4 @@ if st.button("Submit"):
 st.subheader("Submitted Ideas:")
 for i, row in df_ideas.iterrows():
     st.write(f"{i + 1}. **{row['Name']}**: {row['Idea']}")
+
