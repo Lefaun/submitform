@@ -7,8 +7,8 @@ import base64
 import json
 
 # GitHub repo and file information
-GITHUB_REPO = "Lefaun/submitform"
-GITHUB_FILE_PATH = "main/ideas.csv"
+GITHUB_REPO = Lefaun/submitform
+GITHUB_FILE_PATH = main/ideas.csv
 
 # Use environment variable or Streamlit secrets for the token
 #GITHUB_ACCESS_TOKEN = os.getenv("GITHUB_ACCESS_TOKEN")  # For local use
