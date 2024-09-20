@@ -14,7 +14,7 @@ GITHUB_FILE_PATH = "main/ideas.csv"
 
 # Use environment variable or Streamlit secrets for the token
 #GITHUB_ACCESS_TOKEN = os.getenv("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")  # For local use
-GITHUB_ACCESS_TOKEN = st.secrets["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"]  # For Streamlit sharing
+#GITHUB_ACCESS_TOKEN = st.secrets["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"]  # For Streamlit sharing
 
 # Function to load CSV file from GitHub
 def load_csv(url):
