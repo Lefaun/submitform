@@ -92,4 +92,3 @@ if st.button("Submit"):
 st.subheader("Submitted Ideas:")
 for i, row in df_ideas.iterrows():
     st.write(f"{i + 1}. **{row['Name']}**: {row['Idea']}")
-
