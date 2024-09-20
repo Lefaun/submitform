@@ -6,7 +6,7 @@ from io import StringIO
 
 # Informações do repositório e do arquivo
 GITHUB_REPO = "Lefaun/submitform"
-GITHUB_FILE_PATH = "ideas.csv"
+GITHUB_FILE_PATH = "main/ideas.csv"
 
 # Acesso ao token do GitHub a partir do arquivo de segredos
 GITHUB_ACCESS_TOKEN = st.secrets["general"]["GITHUB_ACCESS_TOKEN"]
