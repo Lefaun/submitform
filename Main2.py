@@ -13,7 +13,7 @@ GITHUB_FILE_PATH = "main/ideas.csv"
 #GITHUB_ACCESS_TOKEN = "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"
 
 # Use environment variable or Streamlit secrets for the token
-#GITHUB_ACCESS_TOKEN = os.getenv("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")  # For local use
+GITHUB_ACCESS_TOKEN = os.getenv("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")  # For local use
 #GITHUB_ACCESS_TOKEN = st.secrets["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"]
 GITHUB_ACCESS_TOKEN = st.secrets["general"]["GITHUB_ACCESS_TOKEN"] 
 #"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"]  # For Streamlit sharing
