@@ -8,7 +8,7 @@ import json
 # GitHub repo and file information
 GITHUB_REPO = "lefaun/submitform"
 GITHUB_FILE_PATH = "ideas.csv"
-GITHUB_ACCESS_TOKEN = "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"
+GITHUB_ACCESS_TOKEN = "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"
 
 # GitHub raw file URL
 csv_url = f"https://raw.githubusercontent.com/{GITHUB_REPO}/main/{GITHUB_FILE_PATH}"
