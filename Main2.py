@@ -73,7 +73,7 @@ df_ideas = load_csv(csv_url)
 st.title("Submit Your Idea")
 name = st.text_input("Your Name:")
 idea = st.text_area("Your Idea:")
-
+st.write(st.secrets)
 # Handle form submission
 if st.button("Submit"):
     if name and idea:
