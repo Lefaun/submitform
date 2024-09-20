@@ -8,7 +8,7 @@ import json
 
 # GitHub repo and file information
 GITHUB_REPO = "Lefaun/submitform"
-GITHUB_FILE_PATH = "ideas.csv"
+GITHUB_FILE_PATH = "main/ideas.csv"
 
 #GITHUB_ACCESS_TOKEN = "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"
 
