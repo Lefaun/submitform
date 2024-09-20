@@ -10,7 +10,7 @@ import json
 GITHUB_REPO = "Lefaun/submitform"
 GITHUB_FILE_PATH = "ideas.csv"
 
-GITHUB_ACCESS_TOKEN = os.getenv("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")
+GITHUB_ACCESS_TOKEN = ("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")
 
 # Function to load CSV file from GitHub
 def load_csv(url):
