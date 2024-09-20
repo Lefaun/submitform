@@ -26,7 +26,7 @@ def load_csv(url):
 
 # Function to get the SHA of the file (needed for updates)
 def get_file_sha(repo, path, token):
-    url = f"https://api.github.com/repos/{repo}/contents/{path}"
+    url = f"https://raw.githubusercontent.com/Lefaun/submitform/refs/heads/main/ideas.csv"
     headers = {"Authorization": f"token {token}"}
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
@@ -38,7 +38,7 @@ def get_file_sha(repo, path, token):
 
 # Function to update CSV on GitHub
 def update_csv_on_github(repo, path, token, content, sha):
-    url = f"https://api.github.com/repos/{repo}/contents/{path}"
+    url = f"https://raw.githubusercontent.com/Lefaun/submitform/refs/heads/main/ideas.csv"
     headers = {
         "Authorization": f"token {token}",
         "Content-Type": "application/json"
