@@ -1,46 +1,45 @@
 import streamlit as st
 import pandas as pd
 import requests
-import os
-from io import StringIO
 import base64
-import json
+from io import StringIO
 
-# GitHub repo and file information
+# Informações do repositório e do arquivo
 GITHUB_REPO = "Lefaun/submitform"
-GITHUB_FILE_PATH = "main/ideas.csv"
+GITHUB_FILE_PATH = "ideas.csv"
 
-# Use environment variable or Streamlit secrets for the token
-#GITHUB_ACCESS_TOKEN = os.getenv("GITHUB_ACCESS_TOKEN")  # For local use
-GITHUB_ACCESS_TOKEN = st.secrets["general"]["GITHUB_ACCESS_TOKEN"]  # For Streamlit sharing
+# Acesso ao token do GitHub a partir do arquivo de segredos
+GITHUB_ACCESS_TOKEN = st.secrets["general"]["GITHUB_ACCESS_TOKEN"]
 
-# Function to load CSV file from GitHub
+# Função para carregar o arquivo CSV do GitHub
 def load_csv(url):
-    response = requests.get(url)
+    headers = {
+        "Authorization": f"token {GITHUB_ACCESS_TOKEN}"
+    }
+    response = requests.get(url, headers=headers)
     if response.status_code == 200:
         data = StringIO(response.text)
         df = pd.read_csv(data)
         return df
     else:
-        st.error("Failed to load data from GitHub.")
+        st.error(f"Falha ao carregar dados do GitHub. Código de Status: {response.status_code}")
         return pd.DataFrame(columns=["Name", "Idea"])
 
-# Function to get the SHA of the file
+# Função para obter o SHA do arquivo
 def get_file_sha(repo, path, token):
     url = f"https://api.github.com/repos/{repo}/contents/{path}"
     headers = {"Authorization": f"token {token}"}
-
+    
     response = requests.get(url, headers=headers)
-
+    
     if response.status_code == 200:
         file_info = response.json()
         return file_info['sha']
     else:
-        st.error(f"Failed to fetch file SHA. Status Code: {response.status_code}")
-        st.error(f"Response: {response.text}")
+        st.error(f"Falha ao buscar SHA do arquivo. Código de Status: {response.status_code}")
         return None
 
-# Function to update CSV on GitHub
+# Função para atualizar o CSV no GitHub
 def update_csv_on_github(repo, path, token, content, sha):
     url = f"https://api.github.com/repos/{repo}/contents/{path}"
     headers = {
@@ -48,7 +47,7 @@ def update_csv_on_github(repo, path, token, content, sha):
         "Content-Type": "application/json"
     }
 
-    message = "Updating CSV with new idea submission"
+    message = "Atualizando CSV com nova submissão de ideia"
     content_encoded = base64.b64encode(content.encode()).decode("utf-8")
 
     data = {
@@ -57,25 +56,25 @@ def update_csv_on_github(repo, path, token, content, sha):
         "sha": sha
     }
 
-    response = requests.put(url, headers=headers, data=json.dumps(data))
+    response = requests.put(url, headers=headers, json=data)
 
     if response.status_code == 200:
-        st.success("CSV file updated successfully on GitHub.")
+        st.success("Arquivo CSV atualizado com sucesso no GitHub.")
     else:
-        st.error(f"Failed to update the CSV on GitHub: {response.status_code}")
+        st.error(f"Falha ao atualizar o CSV no GitHub: {response.status_code}")
         st.error(response.json())
 
-# Load existing ideas from GitHub CSV
+# URL para carregar o CSV
 csv_url = f"https://raw.githubusercontent.com/{GITHUB_REPO}/main/{GITHUB_FILE_PATH}"
 df_ideas = load_csv(csv_url)
 
-# Streamlit form to submit ideas
-st.title("Submit Your Idea")
-name = st.text_input("Your Name:")
-idea = st.text_area("Your Idea:")
+# Formulário Streamlit para enviar ideias
+st.title("Envie Sua Ideia")
+name = st.text_input("Seu Nome:")
+idea = st.text_area("Sua Ideia:")
 
-# Handle form submission
-if st.button("Submit"):
+# Manipulação da submissão do formulário
+if st.button("Enviar"):
     if name and idea:
         new_row = pd.DataFrame([[name, idea]], columns=["Name", "Idea"])
         df_ideas = pd.concat([df_ideas, new_row], ignore_index=True)
@@ -86,9 +85,9 @@ if st.button("Submit"):
         if sha:
             update_csv_on_github(GITHUB_REPO, GITHUB_FILE_PATH, GITHUB_ACCESS_TOKEN, csv_content, sha)
     else:
-        st.error("Please fill out both fields before submitting.")
+        st.error("Por favor, preencha ambos os campos antes de enviar.")
 
-# Display submitted ideas
-st.subheader("Submitted Ideas:")
+# Exibir ideias submetidas
+st.subheader("Ideias Submetidas:")
 for i, row in df_ideas.iterrows():
     st.write(f"{i + 1}. **{row['Name']}**: {row['Idea']}")
